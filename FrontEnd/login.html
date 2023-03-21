@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Sophie Bluel - Architecte d'intérieur login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Work+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <meta name="description" content="">
+    <link rel="stylesheet" href="./assets/style.css">
+</head>
+
+<body>
+    <header class="header-box">
+        <h1 class="title-site">Sophie Bluel <span class="title-span">Architecte d'intérieur</span></h1>
+        <nav class="nav-box">
+            <ul class="ul-nav">
+                <li class="nav-li"><a href="./index.html#portfolio">projets</a></li>
+                <li class="nav-li"><a href="./index.html#contact">contact</a></li>
+                <li class="nav-li"><a href="./login.html" class="login-page__link"id="login-button">login<a></li>
+                <li class="li-insta"><img src="./assets/icons/instagram.png" alt="Instagram" class="insta-icon"></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section id="login">
+            <h2>Log in</h2>
+            <form id="login-form">
+                <label for="email" class="modal-label__txt">E-mail</label>
+                <input type="email" name="email" id="email" class="input-user">
+                <label for="password" class="modal-label__txt">Mot de passe</label>
+                <input type="password" name="password" id="password" class="input-user">
+                <input type="submit" value="Se connecter" id="login-button">
+                <a href="#" id="forgot-password">Mot de passe oublié</a>
+            </form>
+        </section>
+    </main>
+    <footer>
+        <nav>
+            <ul>
+                <li class="ul-footer">Mentions Légales</li>
+            </ul>
+        </nav>
+    </footer>
+    <script src="./assets/java/login.js"></script>
+</body>
+
+</html>

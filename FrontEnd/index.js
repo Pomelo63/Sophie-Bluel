@@ -40,11 +40,11 @@ function uploadProject() {
                 project.add(data[d]);//remplissage de la variable project pour les réutiliser dans la fonction de filtre
             }
             //transformation dee l'objet set categories en un Array
-            const c = Array.from(categories);
-            c.unshift('Tous'); //rajout manuel de la catégories 'tous' les projets
+            const categoriesArray = Array.from(categories);
+            categoriesArray.unshift('Tous'); //rajout manuel de la catégories 'tous' les projets
             //boucle pour créer un bouton de filtre sur toutes les catégories trouvées dans les objets uploadé par l'API.
-            for (let i in c) {
-                document.querySelector('.categories-list').insertAdjacentHTML('beforeend', `<div class="categories-button">${c[i]}</div>`)
+            for (let i in categoriesArray) {
+                document.querySelector('.categories-list').insertAdjacentHTML('beforeend', `<div class="categories-button">${categoriesArray[i]}</div>`)
                 if (i == 0) {
                     document.querySelector('.categories-button').classList.add('categories-button--active');
                 }
@@ -62,9 +62,9 @@ document.addEventListener('click', function (e) {
         //place la classe css sur le target actuel
         e.target.classList.add('categories-button--active');
         // Créer un tableau avec les data de l'objet set project
-        const p = Array.from(project);
+        const projectArray = Array.from(project);
         //filtrer les projets grâce à la fonction filterWork qui récupère l'innertext du bouton cliqué
-        const filterToReturn = p.filter(function (filterWork) {
+        const filterToReturn = projectArray.filter(function (filterWork) {
             return filterWork.category.name === e.target.innerText;
         })
         //vide de la section gallery
@@ -84,12 +84,12 @@ document.addEventListener('click', function (e) {
         }
         // si il y 0 projet dans mes filtres alors je raffiche tous les projets (valable au click sur le bouton tous)
         else {
-            for (let i in p) {
+            for (let i in projectArray) {
                 const gallery = document.querySelector('.gallery');
                 gallery.insertAdjacentHTML('beforeend', `    <div class="gallery__item">
-                    <img src="${p[i].imageUrl}" alt="${p[i].title}" class="gallery__img">
+                    <img src="${projectArray[i].imageUrl}" alt="${projectArray[i].title}" class="gallery__img">
                     <div class="gallery__info">
-                        <p class="gallery__title">${p[i].title}</p>`)
+                        <p class="gallery__title">${projectArray[i].title}</p>`)
             }
         }
     }
@@ -177,15 +177,15 @@ function modalUploadProjects() {
         }
     })
         .then(response => response.json())
-        .then(data => {
+        .then(datas => {
             // En cas de réussite je charge tous les élements
-            for (let d in data) {
-                allDbProject.add(data[d]); //Ajout des projets dans l'objet qui sert à la supression de tous les projets
+            for (let data in datas) {
+                allDbProject.add(datas[data]); //Ajout des projets dans l'objet qui sert à la supression de tous les projets
                 const modalProjectBox = document.querySelector('.modal-project__box');
                 modalProjectBox.insertAdjacentHTML('beforeend', `<div class="modal__item">
-        <img src="./assets/icons/Trash.svg" alt="icône de poubelle" class="delete__icon" id="${data[d].id}">
-        <img src="${data[d].imageUrl}" alt="${data[d].title}" class="modal__img">
-        <p class="modal__text" id="${data[d].id}">éditer</p>`)//id utilisé par la suppresion unitaire des projets
+        <img src="./assets/icons/Trash.svg" alt="icône de poubelle" class="delete__icon" id="${datas[data].id}">
+        <img src="${datas[data].imageUrl}" alt="${datas[data].title}" class="modal__img">
+        <p class="modal__text" id="${datas[data].id}">éditer</p>`)//id utilisé par la suppresion unitaire des projets
             }
         })
 }
@@ -199,10 +199,10 @@ function closeModal() {
 }
 
 // Ouverture de la modal pour ajouter une image
-function swapModal () { 
-        const modal = document.querySelector('.rewrite-modal');
-        modal.innerHTML = "";//reset de la modal
-        modal.insertAdjacentHTML('beforeend', `
+function swapModal() {
+    const modal = document.querySelector('.rewrite-modal');
+    modal.innerHTML = "";//reset de la modal
+    modal.insertAdjacentHTML('beforeend', `
     <img src="./assets/icons/Arrow_Back.svg" alt="logo de modification" class="arrow__icon" onclick="backToBasicModal()">
     <img src="./assets/icons/Close.svg" alt="logo de modification" class="cross__logo modal-close" onclick="closeModal()">
     <p class="modal__title">Ajout photo</p>
@@ -223,8 +223,8 @@ function swapModal () {
     <span class="span__border"></span>
     <input type="submit" class="add-picture__button grey-btn" id="add-btn" value="Valider">
     `)
-        getCategories(); // appel la fonction getCategories pour remplir la list des catégories disponnibles
-    }
+    getCategories(); // appel la fonction getCategories pour remplir la list des catégories disponnibles
+}
 
 // Si l'utilisateur appuie sur la fèche alors retour à la modal d'éditon et supression initiale
 function backToBasicModal() {
@@ -236,29 +236,29 @@ function backToBasicModal() {
 }
 // Lors du changement de l'input type file
 function changeFile() {
-        const inputFile = document.querySelector('.add-picture__input')
-        //appel de la fonction pour vérifier si le fichier est sous un format valide
-        //Condition Si il n'y a pas de fichier
-        if (validFileType(inputFile.files[0] === '')) { //ne rien faire
-        }
-        //sinon
-        else {
-            //si le fichier est sous le bon format alors
-            if (inputFile.files[0].type === 'image/png' || inputFile.files[0].type === 'image/jpeg') {
-                //vérification de la taille du fichier
-                //si fichier trop volumineux
-                if (inputFile.files[0].size > 4000000) { alert('Photo trop volumineuse') } //alerte
-                //sinon
-                else {
-                    const imgUploaded = document.createElement('img');
-                    imgUploaded.src = URL.createObjectURL(inputFile.files[0]);
-                    imgUploaded.className = 'img-uploaded';
-                    document.querySelector('.add-picture__box').appendChild(imgUploaded); //je créer la visualisation de l'image
-                    imageUploaded = true;
-                }
-            } else { alert('Format non accepté') } //sinon format non accepté
-        }
+    const inputFile = document.querySelector('.add-picture__input')
+    //appel de la fonction pour vérifier si le fichier est sous un format valide
+    //Condition Si il n'y a pas de fichier
+    if (validFileType(inputFile.files[0] === '')) { //ne rien faire
     }
+    //sinon
+    else {
+        //si le fichier est sous le bon format alors
+        if (inputFile.files[0].type === 'image/png' || inputFile.files[0].type === 'image/jpeg') {
+            //vérification de la taille du fichier
+            //si fichier trop volumineux
+            if (inputFile.files[0].size > 4000000) { alert('Photo trop volumineuse') } //alerte
+            //sinon
+            else {
+                const imgUploaded = document.createElement('img');
+                imgUploaded.src = URL.createObjectURL(inputFile.files[0]);
+                imgUploaded.className = 'img-uploaded';
+                document.querySelector('.add-picture__box').appendChild(imgUploaded); //je créer la visualisation de l'image
+                imageUploaded = true;
+            }
+        } else { alert('Format non accepté') } //sinon format non accepté
+    }
+}
 
 //Listes des fichier accepté par l'input file
 const fileTypes = [
@@ -281,11 +281,11 @@ function getCategories() {
         }
     })
         .then(response => response.json())
-        .then(data => {
-            for (let d in data) {
+        .then(datas => {
+            for (let data in datas) {
                 //en retour je créer des options de sélection pour ma listbox
-                categoriesIdSet.add(data[d]); //Objet Set qui sert à récupérer les catégories avec leurs ID utiliser pour ajouter un projet
-                categories.innerHTML += `<option value="${data[d].name}"/>`;
+                categoriesIdSet.add(datas[data]); //Objet Set qui sert à récupérer les catégories avec leurs ID utiliser pour ajouter un projet
+                categories.innerHTML += `<option value="${datas[data].name}"/>`;
             }
         })
 }
@@ -299,7 +299,7 @@ document.addEventListener('submit', function (e) {
         const userCategory = document.getElementById('add-picture__list');
         //vérification si tous les champs sont rempli
         //si non
-        if (imageUploaded ===  false || userTitle.value === '' || userCategory.value === '') {
+        if (imageUploaded === false || userTitle.value === '' || userCategory.value === '') {
             snackbar.innerHTML = 'Veuillez remplir tous les champs du formulaire'
             snackbarShow();
         }
@@ -344,7 +344,10 @@ document.addEventListener('submit', function (e) {
                         uploadProject() //simulation réactualisation de la page 
                     }
                     )
-                    .catch(error => console.log("impossible d'ajouter ce projet"))
+                    .catch(error => {
+                        snackbar.innerHTML = "Projet n'a pas pu être ajouté";
+                        snackbarShow();
+                    })
                 //Reset du formulaire
                 categoryToReturn = null;
                 const imgUploaded = document.querySelector('.img-uploaded');
@@ -352,10 +355,6 @@ document.addEventListener('submit', function (e) {
                 userFile.value = '';
                 userTitle.value = '';
                 userCategory.value = '';
-                setTimeout(function () {
-                    addResponse.innerHTML = ""
-                }, 500)
-
             }
         }
     }
@@ -369,7 +368,6 @@ document.addEventListener('click', function (e) {
         const r = fetch(`http://localhost:5678/api/works/${id}`, {
             method: 'DELETE',
             headers: {
-                "Accept": "*/*",
                 "Authorization": 'Bearer ' + sessionStorage.token
             }
         })
@@ -388,11 +386,10 @@ document.addEventListener('click', function (e) {
         //Création d'un tableau pour récupérer tous les projets présents dans l'API
         const projectsID = Array.from(allDbProject);
         //Boucle for pour supprimer tous les projets 1 par 1
-        for (let p in projectsID) {
-            const r = fetch(`http://localhost:5678/api/works/${projectsID[p].id}`, {
+        for (let project in projectsID) {
+            const r = fetch(`http://localhost:5678/api/works/${projectsID[project].id}`, {
                 method: 'DELETE',
                 headers: {
-                    "Accept": "*/*",
                     "Authorization": 'Bearer ' + sessionStorage.token
                 }
             }).then(response => {
@@ -401,7 +398,7 @@ document.addEventListener('click', function (e) {
                 const listToDelete = document.querySelector('.categories-list');
                 listToDelete.innerHTML = "";
                 uploadProject();//on réactualise la page
-                allDbProject.delete(projectsID[p]);//on enlève le projet de l'objet Set
+                allDbProject.delete(projectsID[project]);//on enlève le projet de l'objet Set
             })
             snackbar.innerHTML = 'Tous les projets ont été supprimés'
             snackbarShow();
@@ -414,13 +411,13 @@ function snackbarShow() {
     setTimeout(function () { snackbar.classList.remove("show"); }, 3000);
 }
 
-document.addEventListener('change', function(e){
-    if (e.target.classList.contains('i')){
+document.addEventListener('change', function (e) {
+    if (e.target.classList.contains('i')) {
         const btnAdd = document.getElementById('add-btn');
         const userFile = document.getElementById('add-picture__input');
         const userTitle = document.getElementById('add-picture__text');
         const userCategory = document.getElementById('add-picture__list');
-        if (imageUploaded === false || userTitle.value === ''|| userCategory.value === ''){
+        if (imageUploaded === false || userTitle.value === '' || userCategory.value === '') {
             btnAdd.classList.add('grey-btn');
             btnAdd.classList.remove('green-btn')
         } else {

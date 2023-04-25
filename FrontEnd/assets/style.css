@@ -320,7 +320,19 @@ footer {
 .profil-picture__button:hover {
 	font-weight: 600;
 }
+.profil-desc__button {
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	text-align: center;
+	cursor: pointer;
+	width: 30px;
+	gap: 11px;
+}
 
+.profil-desc__button:hover {
+	font-weight: 600;
+}
 .title-portfolio__button {
 	display: flex;
 	align-items: center;

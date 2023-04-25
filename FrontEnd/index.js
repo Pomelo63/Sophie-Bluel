@@ -11,6 +11,7 @@ var snackbar = document.querySelector('.snackbar');
 
 // Fonction à jouer au lancement de la page index
 this.uploadProject();
+this.uploadCategories();
 this.verifyUser()
 
 // fonction pour uploader tous les projet de la database
@@ -39,15 +40,24 @@ function uploadProject() {
                 categories.add(data[d].category.name); //Remplissage de l'objet set pour le réutiliser dans le chargement des catégories
                 project.add(data[d]);//remplissage de la variable project pour les réutiliser dans la fonction de filtre
             }
-            //transformation dee l'objet set categories en un Array
-            const categoriesArray = Array.from(categories);
-            categoriesArray.unshift('Tous'); //rajout manuel de la catégories 'tous' les projets
-            //boucle pour créer un bouton de filtre sur toutes les catégories trouvées dans les objets uploadé par l'API.
-            for (let i in categoriesArray) {
-                document.querySelector('.categories-list').insertAdjacentHTML('beforeend', `<div class="categories-button">${categoriesArray[i]}</div>`)
-                if (i == 0) {
-                    document.querySelector('.categories-button').classList.add('categories-button--active');
-                }
+        })
+}
+
+//fonction pour remplir la listbox des catégories
+function uploadCategories() {
+    const categories = document.querySelector('#categories-list');
+    //Appel à l'API catégories
+    const data = fetch('http://localhost:5678/api/categories', {
+        method: 'get',
+        headers: {
+            'accept': 'application/json'
+        }
+    })
+        .then(response => response.json())
+        .then(datas => {
+        document.querySelector('.categories-list').insertAdjacentHTML('beforeend', `<div class="categories-button categories-button--active">tous</div>`) 
+            for (let data in datas) {
+                document.querySelector('.categories-list').insertAdjacentHTML('beforeend', `<div class="categories-button">${datas[data].name}</div>`)
             }
         })
 }
@@ -137,6 +147,11 @@ function openAdminPanel() {
     <img src="./assets/icons/Rewrite_black.svg" alt="logo de modification" class="rewrite__logo">
     <p class="rewrite-profil__text">modifier</p>
     </div>`);
+    const profilArticle = document.querySelector('.profil-desc');
+    profilArticle.insertAdjacentHTML('beforeend', `<div class="profil-desc__button">
+<img src="./assets/icons/Rewrite_black.svg" alt="logo de modification" class="rewrite__logo">
+<p class="rewrite-profil__text">modifier</p>
+</div>`);
         const portfolioTitle = document.querySelector('.title-portfolio');
         portfolioTitle.insertAdjacentHTML('beforeend', `<div class="title-portfolio__button modal-open" onclick="openModal()">
     <img src="./assets/icons/Rewrite_black.svg" alt="logo de modification" class="rewrite__logo modal-open">
@@ -148,6 +163,8 @@ function openAdminPanel() {
     else {
         const profilPicture = document.querySelector('.profil-picture__button');
         profilPicture.remove();
+        const profilArticle = document.querySelector('.profil-desc__button');
+        profilArticle.remove();
         const portfolioTitle = document.querySelector('.title-portfolio__button');
         portfolioTitle.remove();
         adminOption = 'off';//changement de la valeur
@@ -339,8 +356,6 @@ document.addEventListener('submit', function (e) {
                         //Si le projet est créer
                         snackbar.innerHTML = 'Projet correctement ajouté'
                         snackbarShow();
-                        const listToDelete = document.querySelector('.categories-list');
-                        listToDelete.innerHTML = "";
                         uploadProject() //simulation réactualisation de la page 
                     }
                     )
@@ -370,13 +385,18 @@ document.addEventListener('click', function (e) {
             headers: {
                 "Authorization": 'Bearer ' + sessionStorage.token
             }
+        }).then(response => {
+            snackbar.innerHTML = 'Le projet a été supprimé'
+            snackbarShow();
+            e.target.parentElement.remove(); //suppression du target
+            uploadProject(); //simulation réactualisation de la page 
+        }
+        )
+        .catch(error => {
+            snackbar.innerHTML = "Projet n'a pas pu être supprimé";
+            snackbarShow();
         })
-        snackbar.innerHTML = 'Le projet a été supprimé'
-        snackbarShow();
-        e.target.parentElement.remove(); //suppression du target
-        const listToDelete = document.querySelector('.categories-list');
-        listToDelete.innerHTML = "";
-        uploadProject(); //simulation réactualisation de la page 
+        
     }
 })
 //si l'utilisateur appuie sur supprimer la galerie
@@ -395,8 +415,6 @@ document.addEventListener('click', function (e) {
             }).then(response => {
                 const modalProjectBox = document.querySelector('.modal-project__box');
                 modalProjectBox.innerHTML = "";
-                const listToDelete = document.querySelector('.categories-list');
-                listToDelete.innerHTML = "";
                 uploadProject();//on réactualise la page
                 allDbProject.delete(projectsID[project]);//on enlève le projet de l'objet Set
             })
